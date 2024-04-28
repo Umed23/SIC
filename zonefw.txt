@@ -1,0 +1,32 @@
+line console 0
+password conpa55                                                                                      
+login
+exit
+
+line vty 0 4
+password vtypa55                                                                                                
+login
+exit
+
+enable secret enpa55                                                                               
+ip domain-name ccnasecurity1.com          
+username admin secret adminpa55
+line vty 0 4                                    
+login local                        
+exit
+
+crypto key generate rsa     
+
+ip route 10.2.2.0 255.255.255.252 10.1.1.2
+ip route 192.168.3.0 255.255.255.0 10.1.1.2
+
+ip route 192.168.1.0 255.255.255.0 10.1.1.1
+ip route 192.168.3.0 255.255.255.0 10.2.2.1
+
+ip route 192.168.1.0 255.255.255.0 10.2.2.2
+ip route 10.1.1.0 255.255.255.252 10.2.2.2
+
+Ten install the security in the r3
+Create a zone on R3
+Zone on g0/1
+TEST from server (PC-A) to PC-A vice versa
