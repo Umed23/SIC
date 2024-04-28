@@ -1,0 +1,31 @@
+after topology
+
+
+R1(config)#enable secret enpa55
+R1(config)#access-list 100 permit tcp 172.22.34.64 0.0.0.31 host 172.22.34.62 eq ftp
+R1(config)#access-list 100 permit icmp 172.22.34.64 0.0.0.31 host 172.22.34.62
+
+R1(config)#int gig0/0
+R1(config-if)#ip access-group 100 in
+R1(config-if)#exit
+R1(config)#access-list 100 permit tcp 172.22.34.64 0.0.0.31 host 172.22.34.62 eq ftp
+R1(config)#access-list 100 permit icmp 172.22.34.64 0.0.0.31 host 172.22.34.62
+R1(config)#int gig0/0
+R1(config-if)#ip access-group 100 in
+R1(config-if)
+#exit
+R1(config)#access-list 100 permit tcp any any eq ftp
+R1(config)#access-list 100 permit tcp any any eq www
+R1(config)#int g0/0
+R1(config-if)#ip access-group 100 in
+R1(config-if)#exit
+
+R1(config)#ip access-list extended HTTP_ONLY
+R1(config-ext-nacl)#permit tcp 172.22.34.96 0.0.0.15 host 172.22.34.62 eq www
+R1(config-ext-nacl)#permit icmp 172.22.34.96 0.0.0.15 host 172.22.34.62
+R1(config-ext-nacl)#exit
+R1(config)#int gig0/1
+R1(config-if)#ip access-group HTTP_ONLY in
+
+pc->
+ftp 172.22.34.62
