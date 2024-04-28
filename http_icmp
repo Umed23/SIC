@@ -1,0 +1,66 @@
+icmp ->
+ipv6 unicast-routing
+
+R1
+ipv6 route 2001:DB8:1:2::0/64 2001:DB8:1:1::2
+ipv6 route 2001:DB8:1:30::0/64 2001:DB8:1:1::2
+
+R2(config)#ipv6 unicast-routing
+R2(config)#ipv6 route 2001:DB8:1:10::0/64 2001:DB8:1:1::1
+R2(config)#ipv6 route 2001:DB8:1:11::0/64 2001:DB8:1:1::1
+R2(config)#ipv6 route 2001:DB8:1:30::0/64 2001:DB8:1:2::1
+
+R3(config)#ipv6 unicast-routing
+R3(config)#ipv6 route 2001:DB8:1:10::0/64 2001:DB8:1:2::2
+R3(config)#ipv6 route 2001:DB8:1:11::0/64 2001:DB8:1:2::2
+R3(config)#ipv6 route 2001:DB8:1:1::0/64 2001:DB8:1:2::2
+
+R3(config)# access-list 101 deny icmp any any
+R3(config)# interface Serial0/1/0
+R3(config-if)# ip access-group 101 in
+R3(config-if)# exit
+R3(config)# interface GigabitEthernet0/1
+R3(config-if)# ip access-group 101 in
+R3(config-if)# exit
+R3(config)# interface GigabitEthernet0/0
+R3(config-if)# ip access-group 101 in
+R3(config-if)# exit
+R3(config)# exit
+
+pc1->ping
+
+
+-----------------------------------------------------------------------
+
+
+HTTP and HTTPS ->
+
+ipv6 unicast-routing
+
+R1(config):ipv6 route 2001:DB8:1:2::0/64 2001:DB8:1:1::2
+R1(config):ipv6 route 2001:DB8:1:30::0/64 2001:DB8:1:1::2
+
+R2(config)#ipv6 unicast-routing
+R2(config)#ipv6 route 2001:DB8:1:10::0/64 2001:DB8:1:1::1
+R2(config)#ipv6 route 2001:DB8:1:11::0/64 2001:DB8:1:1::1
+R2(config)#ipv6 route 2001:DB8:1:30::0/64 2001:DB8:1:2::1
+
+R3(config)#ipv6 unicast-routing
+R3(config)#ipv6 route 2001:DB8:1:10::0/64 2001:DB8:1:2::2
+R3(config)#ipv6 route 2001:DB8:1:11::0/64 2001:DB8:1:2::2
+R3(config)#ipv6 route 2001:DB8:1:1::0/64 2001:DB8:1:2::2
+R1(config)# ipv6 access-list BLOCK_HTTP_HTTPS
+R1(config-ipv6-acl)# deny tcp any any eq www
+R1(config-ipv6-acl)# deny tcp any any eq 443
+R1(config-ipv6-acl)# permit ipv6 any any
+R1(config-ipv6-acl)# exit
+
+R1(config)# interface GigabitEthernet0/0
+R1(config-if)# ipv6 traffic-filter BLOCK_HTTP_HTTPS in
+R1(config-if)# exit
+
+R1(config)# interface GigabitEthernet0/1
+R1(config-if)# ipv6 traffic-filter BLOCK_HTTP_HTTPS in
+R1(config-if)# exit
+exit
+show access-list
