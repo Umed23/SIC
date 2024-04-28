@@ -1,0 +1,36 @@
+1(config)#line vty 0 4
+R1(config-line)#password vtypa55
+R1(config-line)#login
+R1(config-line)#exit
+R1(config)#
+
+R1(config)#enable secret enpa55
+R1(config)#router ospf 1
+R1(config-router)#network 192.168.1.0 0.0.0.255 area 0
+R1(config-router)#exit
+
+R1(config)#router ospf 1
+R1(config-router)#area 0 authentication message-digest
+R1(config-router)#int gig0/0
+R1(config-if)#ip ospf message-digest-key 1 md5 md5pa55
+exit
+
+
+show ip ospf interface
+
+R1(config)#interface GigabitEthernet0/0
+R1(config-if)#exit
+R1(config)#username admin secret adminpa55
+R1(config)#aaa new-model
+R1(config)#aaa authentication login default local
+R1(config)#line console 0
+R1(config-line)#login authentication default
+R1(config-line)#end
+
+R1(config)#ip domain-name ccsnasecurity.com
+R1(config)#crypto key generate rsa
+
+R1(config-line)#login authentication SSH-LOGIN
+R1(config-line)#transport input ssh
+
+C:\>ssh -1 admin 192.168.1.1
